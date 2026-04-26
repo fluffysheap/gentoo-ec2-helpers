@@ -1,0 +1,35 @@
+#!/sbin/openrc-run
+# Copyright (c) 2026 fluffysheap
+# License: MIT-0 Non Attribution
+
+depend()
+{
+	after network-online
+	before sshd
+	keyword -docker -podman -jail -lxc -openvz -prefix -systemd-nspawn -vserver -wsl
+}
+
+start()
+{
+	ebegin "Acquiring SSH key"
+	KEYFILE=/home/gentoo/.ssh/authorized_keys
+	if [ -f "$KEYFILE" ] ; then
+		echo "SSH key already installed"
+		eend 0
+	else
+		COUNT=0
+		# For whatever reason EC2 metadata service isn't ready for a few seconds after network is up
+		while [ -z "$TOKEN" -a "$COUNT" -lt 60 ] ; do
+			TOKEN=`curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 60"` 
+			(( COUNT++ ))
+			sleep 1
+		done
+		if [ -n "$TOKEN" ] ; then
+			curl -s -f -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /tmp/ec2-ssh-key && mv /tmp/ec2-ssh-key $KEYFILE && chown gentoo:gentoo $KEYFILE && chmod 644 $KEYFILE || (echo "SSH key retrieval failed" && rm -f /tmp/ec2-ssh-key && eend 1)
+			eend 0
+		else
+			echo "IMDS2 token generation failed"
+			eend 1
+		fi
+	fi
+}
