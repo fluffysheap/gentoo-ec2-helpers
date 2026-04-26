@@ -1,0 +1,14 @@
+BDEPEND=virtual/pkgconfig
+DEFINED_PHASES=install postinst postrm
+DESCRIPTION=Amazon EC2 host commandline utilities (not AWS-CLI)
+EAPI=8
+HOMEPAGE=https://github.com/amazonlinux/amazon-ec2-utils/
+INHERIT=udev
+IUSE=udev
+KEYWORDS=arm64 amd64
+LICENSE=MIT
+RDEPEND=net-misc/curl
+SLOT=0
+SRC_URI=https://github.com/amazonlinux/amazon-ec2-utils/archive/refs/tags/v2.2.0.tar.gz
+_eclasses_=toolchain-funcs	58a918e3a42d0156f010dcfd43725be5	udev	20c370aff0d0c108f3605c84b3f47084
+_md5_=f43776b15698be7d130b7661fad40e35
