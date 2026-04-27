@@ -1,0 +1,9 @@
+DEFINED_PHASES=install postinst unpack
+DESCRIPTION=Expand the EC2 EBS root filesystem to the maximum size
+EAPI=9
+HOMEPAGE=https://github.com/fluffysheap/gentoo-ec2-helpers
+KEYWORDS=arm64 amd64
+LICENSE=MIT-0
+RDEPEND=sys-fs/growpart sys-apps/amazon-ec2-utils[udev]
+SLOT=0
+_md5_=520f8526022c18126c6329e4421ecfb0

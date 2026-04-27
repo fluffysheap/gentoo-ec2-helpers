@@ -1,0 +1,32 @@
+#!/sbin/openrc-run
+# Copyright (c) 2026 fluffysheap
+# License: MIT-0 Non Attribution
+
+depend()
+{
+	after udev-settle
+	keyword -docker -podman -jail -lxc -openvz -prefix -systemd-nspawn -vserver -wsl
+}
+
+start()
+{
+	ebegin "Expanding root filesystem..."
+	# Yes, /dev/sda1, see: 
+	# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html
+	# The device is named sda1 even though it links to a full NVMe device
+	# It's a bodge
+	ROOTDEV1="/dev/sda1"
+	ROOTDEV2="/dev/xvda"
+	if [ -b "$ROOTDEV1" ] ; then
+		/usr/sbin/growpart $ROOTDEV1 1
+		/usr/bin/resize2fs "$ROOTDEV1"1
+		eend 0
+	elif [ -b "$ROOTDEV2" ] ; then
+		/usr/sbin/growpart $ROOTDEV2 1
+		/usr/bin/resize2fs "$ROOTDEV2"1
+		eend 0
+	else
+		echo "Couldn't find the right root device"
+		eend 1
+	fi
+}
